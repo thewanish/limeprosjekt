@@ -15,7 +15,7 @@ const error = ref('');
 
 const createUser = async () => {
   if (!name.value || !email.value) {
-    error.value = 'Trenger navn og email eller etternavn';
+    error.value = 'Trenger navn og etternavn eller selskap';
     return;
   }
 
@@ -78,7 +78,7 @@ const createUser = async () => {
         class="w-full p-2 bg-green-500 rounded-lg hover:bg-green-600 transition duration-200"
         :disabled="loading"
       >
-        {{ loading ? 'Laster..' : 'Start Chat' }}
+        {{ loading ? 'Laster..' : 'Start Chat (tar 30 sec å våkne)' }}
       </button>
 
       <p v-if="error" class="text-red-400 text-center mt-2">{{ error }}</p>
