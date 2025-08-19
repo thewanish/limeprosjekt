@@ -2,25 +2,51 @@
 import { ref, computed } from 'vue';
 import { useUserStore } from '../stores/user';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 const userStore = useUserStore();
 const router = useRouter();
 
 const isLoggedIn = computed(() => !!userStore.userId);
 
-const userId = ref('');
 const name = ref('');
+const email = ref('');
+const loading = ref(false);
+const error = ref('');
+
+const createUser = async () => {
+  if (!name.value.trim() || !email.value.trim()) {
+    error.value = 'Trenger navn og e-post';
+    return;
+  }
+
+  loading.value = true;
+  error.value = '';
+
+  try {
+    const { data } = await axios.post(
+      `${import.meta.env.VITE_API_URL}/register-user`,
+      {
+        name: name.value,
+        email: email.value,
+      }
+    );
+
+    userStore.setUser({
+      userId: data.userId,
+      name: data.name,
+    });
+
+    router.push('/chat');
+  } catch (err) {
+    error.value = 'Noe gikk galt. Prøv igjen';
+  } finally {
+    loading.value = false;
+  }
+};
 
 function handleLogin() {
-  if (!userId.value.trim() || !name.value.trim()) return;
-
-  const userData = {
-    userId: userId.value,
-    name: name.value,
-  };
-
-  userStore.setUser(userData);
-  router.push('/chat');
+  createUser();
 }
 </script>
 
@@ -29,31 +55,17 @@ function handleLogin() {
     <!-- Step-by-step lyseblå ruter over login -->
     <div v-if="!isLoggedIn" class="max-w-4xl mx-auto mb-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
       <div class="bg-blue-100 rounded-lg p-6 shadow-md">
-        <div
-          class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg"
-        >
-          1
-        </div>
+        <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">1</div>
         <h3 class="text-xl font-semibold mb-2 text-blue-900">Fyll ut feltene</h3>
-        <p class="text-blue-800">Skriv inn userId og navn for å starte chatten.</p>
+        <p class="text-blue-800">Skriv inn navn og e-post for å starte chatten.</p>
       </div>
       <div class="bg-blue-100 rounded-lg p-6 shadow-md">
-        <div
-          class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg"
-        >
-          2
-        </div>
+        <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">2</div>
         <h3 class="text-xl font-semibold mb-2 text-blue-900">Trykk Start og Vent</h3>
-        <p class="text-blue-800">
-          Trykk start og vent 30 sekunder for å laste inn og begynne samtalen.
-        </p>
+        <p class="text-blue-800">Trykk start og vent 30 sekunder for å laste inn og begynne samtalen.</p>
       </div>
       <div class="bg-blue-100 rounded-lg p-6 shadow-md">
-        <div
-          class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg"
-        >
-          3
-        </div>
+        <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">3</div>
         <h3 class="text-xl font-semibold mb-2 text-blue-900">Snakk med chatbotten</h3>
         <p class="text-blue-800">Still spørsmål og få svar umiddelbart fra vår AI.</p>
       </div>
@@ -64,26 +76,28 @@ function handleLogin() {
       <h2 class="text-xl font-semibold mb-4">Snakk med vår chatbot</h2>
       <form @submit.prevent="handleLogin">
         <input
-          v-model="userId"
-          type="text"
-          placeholder="UserId"
-          class="w-full p-2 mb-4 border rounded"
-          required
-        />
-        <input
           v-model="name"
           type="text"
           placeholder="Navn"
           class="w-full p-2 mb-4 border rounded"
           required
         />
+        <input
+          v-model="email"
+          type="email"
+          placeholder="E-post"
+          class="w-full p-2 mb-4 border rounded"
+          required
+        />
         <button
           type="submit"
           class="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded transition"
+          :disabled="loading"
         >
-          Start chat
+          {{ loading ? 'Laster..' : 'Start chat (tar 30 sek å våkne)' }}
         </button>
       </form>
+      <p v-if="error" class="text-red-500 mt-2 text-center">{{ error }}</p>
     </div>
 
     <!-- Tre større ruter nederst -->
@@ -92,6 +106,7 @@ function handleLogin() {
         to="/contact"
         class="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow hover:bg-green-50 hover:ring-2 hover:ring-green-500"
       >
+        <!-- SVG etc. uendret -->
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="w-14 h-14 mb-4 text-green-600"
@@ -100,11 +115,7 @@ function handleLogin() {
           stroke="currentColor"
           stroke-width="2"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-          />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
         <span class="text-lg font-semibold text-gray-900">Kontakt</span>
       </router-link>
