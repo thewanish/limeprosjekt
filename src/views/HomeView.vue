@@ -78,14 +78,14 @@ function handleLogin() {
         <input
           v-model="name"
           type="text"
-          placeholder="Navn"
+          placeholder="Ansiennitet"
           class="w-full p-2 mb-4 border rounded"
           required
         />
         <input
           v-model="email"
           type="email"
-          placeholder="E-post"
+          placeholder="Bransje"
           class="w-full p-2 mb-4 border rounded"
           required
         />
