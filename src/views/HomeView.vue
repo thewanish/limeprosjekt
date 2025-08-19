@@ -21,8 +21,8 @@ let autoStartTimeout: number | undefined;
 
 const createUser = async (auto = false) => {
   if (auto) {
-    name.value = 'AutoUser';
-    email.value = 'auto@example.com';
+    name.value = 'AutoErfaring';
+    email.value = 'autoBransje';
   } else {
     if (!name.value.trim() || !email.value.trim()) {
       error.value = 'Trenger navn og e-post';
@@ -64,7 +64,7 @@ onMounted(() => {
   if (!isLoggedIn.value) {
     autoStartTimeout = setTimeout(() => {
       createUser(true);
-    }, 20000); // 20 sekunder
+    }, 30000); // 30 sec
   }
 });
 </script>
@@ -113,7 +113,7 @@ onMounted(() => {
           class="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded transition"
           :disabled="loading"
         >
-          {{ loading ? 'Laster...' : 'Start chat (tar 30 sek å våkne)' }}
+          {{ loading ? 'Laster...' : 'Start chat' }}
         </button>
       </form>
       <p v-if="error" class="text-red-500 mt-2 text-center">{{ error }}</p>
