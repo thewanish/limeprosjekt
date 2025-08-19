@@ -17,10 +17,9 @@ const name = ref('');
 const email = ref('');
 const loading = ref(false);
 const error = ref('');
-const autoLoading = ref(false);
+let autoStartTimeout: number | undefined;
 
 const createUser = async (auto = false) => {
-  // Hvis automatisk kall, bruk dummy-data
   if (auto) {
     name.value = 'AutoUser';
     email.value = 'auto@example.com';
@@ -53,29 +52,26 @@ const createUser = async (auto = false) => {
     error.value = 'Noe gikk galt. Prøv igjen';
   } finally {
     loading.value = false;
-    if (auto) {
-      autoLoading.value = false;
-    }
   }
 };
 
 function handleLogin() {
+  clearTimeout(autoStartTimeout); // Avbryt auto hvis bruker trykker
   createUser();
 }
 
 onMounted(() => {
   if (!isLoggedIn.value) {
-    autoLoading.value = true;
-    setTimeout(() => {
+    autoStartTimeout = setTimeout(() => {
       createUser(true);
-    }, 20000); // 20 sekunder delay
+    }, 20000); // 20 sekunder
   }
 });
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-100 p-8">
-    <!-- Step-by-step lyseblå ruter over login -->
+    <!-- Step-by-step -->
     <div v-if="!isLoggedIn" class="max-w-4xl mx-auto mb-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
       <div class="bg-blue-100 rounded-lg p-6 shadow-md">
         <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">1</div>
@@ -94,7 +90,7 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Innloggingsskjema -->
+    <!-- Login-skjema -->
     <div v-if="!isLoggedIn" class="max-w-md mx-auto p-4 bg-white rounded shadow mb-8">
       <h2 class="text-xl font-semibold mb-4">Snakk med vår chatbot</h2>
       <form @submit.prevent="handleLogin">
@@ -103,7 +99,6 @@ onMounted(() => {
           type="text"
           placeholder="Ansiennitet"
           class="w-full p-2 mb-4 border rounded"
-          :disabled="autoLoading"
           required
         />
         <input
@@ -111,35 +106,26 @@ onMounted(() => {
           type="text"
           placeholder="Bransje"
           class="w-full p-2 mb-4 border rounded"
-          :disabled="autoLoading"
           required
         />
         <button
           type="submit"
           class="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded transition"
-          :disabled="loading || autoLoading"
+          :disabled="loading"
         >
-          {{ loading ? 'Laster..' : 'Start chat (tar 30 sek å våkne)' }}
+          {{ loading ? 'Laster...' : 'Start chat (tar 30 sek å våkne)' }}
         </button>
       </form>
       <p v-if="error" class="text-red-500 mt-2 text-center">{{ error }}</p>
-      <p v-if="autoLoading" class="text-center text-gray-500 mt-2">Starter automatisk om 20 sekunder...</p>
     </div>
 
-    <!-- Tre større ruter nederst -->
+    <!-- Lenker -->
     <div v-if="!isLoggedIn" class="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-5xl mx-auto">
       <router-link
         to="/contact"
         class="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow hover:bg-green-50 hover:ring-2 hover:ring-green-500"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-14 h-14 mb-4 text-green-600"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 mb-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
         <span class="text-lg font-semibold text-gray-900">Kontakt</span>
@@ -149,20 +135,9 @@ onMounted(() => {
         to="/doc"
         class="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow hover:bg-green-50 hover:ring-2 hover:ring-green-500"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-14 h-14 mb-4 text-green-600"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 mb-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.1 0-2 .9-2 2v6h4v-6c0-1.1-.9-2-2-2z" />
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M20 14v-2a2 2 0 00-2-2h-4v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2z"
-          />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20 14v-2a2 2 0 00-2-2h-4v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2z" />
         </svg>
         <span class="text-lg font-semibold text-gray-900">Dokumentasjon</span>
       </router-link>
@@ -171,14 +146,7 @@ onMounted(() => {
         to="/om"
         class="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow hover:bg-green-50 hover:ring-2 hover:ring-green-500"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-14 h-14 mb-4 text-green-600"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 mb-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"></circle>
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 12v.01M12 7h.01M12 17h.01" />
         </svg>
