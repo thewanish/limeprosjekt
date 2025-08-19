@@ -83,7 +83,7 @@
           @click="isOpen = !isOpen"
           class="sm:hidden p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-600"
           aria-label="Åpne hovedmeny"
-          :aria-expanded="isOpen"
+          :aria-expanded="isOpen ? 'true' : 'false'"
         >
           <svg
             v-if="!isOpen"
@@ -134,7 +134,7 @@
             @click="toggleMobileDropdown"
             class="w-full flex items-center justify-between px-3 py-2 rounded hover:bg-green-50 hover:text-green-700 focus:outline-none focus:bg-green-50 focus:text-green-700"
             aria-haspopup="true"
-            :aria-expanded="mobileDropdownOpen"
+            :aria-expanded="mobileDropdownOpen ? 'true' : 'false'"
           >
             Meny
             <svg
