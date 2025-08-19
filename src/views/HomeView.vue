@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import { useUserStore } from '../stores/user';
 import { useRouter } from 'vue-router';
 
@@ -8,7 +8,17 @@ const router = useRouter();
 
 const isLoggedIn = computed(() => !!userStore.userId);
 
-function handleLogin(userData: { userId: string; name: string }) {
+const userId = ref('');
+const name = ref('');
+
+function handleLogin() {
+  if (!userId.value.trim() || !name.value.trim()) return;
+
+  const userData = {
+    userId: userId.value,
+    name: name.value,
+  };
+
   userStore.setUser(userData);
   router.push('/chat');
 }
@@ -19,21 +29,29 @@ function handleLogin(userData: { userId: string; name: string }) {
     <!-- Step-by-step lyseblå ruter over login -->
     <div v-if="!isLoggedIn" class="max-w-4xl mx-auto mb-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
       <div class="bg-blue-100 rounded-lg p-6 shadow-md">
-        <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">
+        <div
+          class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg"
+        >
           1
         </div>
         <h3 class="text-xl font-semibold mb-2 text-blue-900">Fyll ut feltene</h3>
-        <p class="text-blue-800">Skriv inn ansiennitet og bransje for å starte chatten.</p>
+        <p class="text-blue-800">Skriv inn userId og navn for å starte chatten.</p>
       </div>
       <div class="bg-blue-100 rounded-lg p-6 shadow-md">
-        <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">
+        <div
+          class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg"
+        >
           2
         </div>
         <h3 class="text-xl font-semibold mb-2 text-blue-900">Trykk Start og Vent</h3>
-        <p class="text-blue-800">Trykk start og vent 30 sekunder for å laste inn og begynne samtalen.</p>
+        <p class="text-blue-800">
+          Trykk start og vent 30 sekunder for å laste inn og begynne samtalen.
+        </p>
       </div>
       <div class="bg-blue-100 rounded-lg p-6 shadow-md">
-        <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">
+        <div
+          class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg"
+        >
           3
         </div>
         <h3 class="text-xl font-semibold mb-2 text-blue-900">Snakk med chatbotten</h3>
@@ -44,16 +62,18 @@ function handleLogin(userData: { userId: string; name: string }) {
     <!-- Innloggingsskjema -->
     <div v-if="!isLoggedIn" class="max-w-md mx-auto p-4 bg-white rounded shadow mb-8">
       <h2 class="text-xl font-semibold mb-4">Snakk med vår chatbot</h2>
-      <form @submit.prevent="handleLogin({ userId: '123', name: 'Testbruker' })">
+      <form @submit.prevent="handleLogin">
         <input
+          v-model="userId"
           type="text"
-          placeholder="Ansiennitet"
+          placeholder="UserId"
           class="w-full p-2 mb-4 border rounded"
           required
         />
         <input
+          v-model="name"
           type="text"
-          placeholder="Bransje"
+          placeholder="Navn"
           class="w-full p-2 mb-4 border rounded"
           required
         />
@@ -72,9 +92,19 @@ function handleLogin(userData: { userId: string; name: string }) {
         to="/contact"
         class="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow hover:bg-green-50 hover:ring-2 hover:ring-green-500"
       >
-        <!-- Mail icon inline heroicon -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 mb-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-14 h-14 mb-4 text-green-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+          />
         </svg>
         <span class="text-lg font-semibold text-gray-900">Kontakt</span>
       </router-link>
@@ -83,9 +113,20 @@ function handleLogin(userData: { userId: string; name: string }) {
         to="/doc"
         class="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow hover:bg-green-50 hover:ring-2 hover:ring-green-500"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 mb-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-14 h-14 mb-4 text-green-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.1 0-2 .9-2 2v6h4v-6c0-1.1-.9-2-2-2z" />
-          <path stroke-linecap="round" stroke-linejoin="round" d="M20 14v-2a2 2 0 00-2-2h-4v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M20 14v-2a2 2 0 00-2-2h-4v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2z"
+          />
         </svg>
         <span class="text-lg font-semibold text-gray-900">Dokumentasjon</span>
       </router-link>
@@ -94,7 +135,14 @@ function handleLogin(userData: { userId: string; name: string }) {
         to="/om"
         class="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow hover:bg-green-50 hover:ring-2 hover:ring-green-500"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 mb-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-14 h-14 mb-4 text-green-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"></circle>
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 12v.01M12 7h.01M12 17h.01" />
         </svg>
