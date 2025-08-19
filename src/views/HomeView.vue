@@ -1,11 +1,9 @@
-
-
 <script setup lang="ts">
 defineOptions({
   name: 'HomeView'
 });
 
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useUserStore } from '../stores/user';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
@@ -20,6 +18,7 @@ const email = ref('');
 const loading = ref(false);
 const error = ref('');
 
+// Originale createUser, for manuell bruk via skjema
 const createUser = async () => {
   if (!name.value.trim() || !email.value.trim()) {
     error.value = 'Trenger navn og e-post';
@@ -54,12 +53,45 @@ const createUser = async () => {
 function handleLogin() {
   createUser();
 }
+
+// Automatisk kall i onMounted uten input (dummy data)
+onMounted(async () => {
+  if (!isLoggedIn.value) {
+    loading.value = true;
+    error.value = '';
+
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/register-user`,
+        {
+          name: 'Automatisk bruker',
+          email: 'auto@bruker.no',
+        }
+      );
+
+      userStore.setUser({
+        userId: data.userId,
+        name: data.name,
+      });
+
+      router.push('/chat');
+    } catch (err) {
+      error.value = 'Noe gikk galt ved automatisk lasting. Prøv igjen';
+      loading.value = false; // La skjemaet vises hvis feil
+    }
+  }
+});
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-100 p-8">
-    <!-- Step-by-step lyseblå ruter over login -->
-    <div v-if="!isLoggedIn" class="max-w-4xl mx-auto mb-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <!-- Vis loader ved automatisk lasting -->
+    <div v-if="loading && !isLoggedIn" class="text-center text-blue-600 text-lg mb-6">
+      Laster opplevelse og starter chatten...
+    </div>
+
+    <!-- Hvis ikke logget inn og ikke loading, vis skjema -->
+    <div v-if="!isLoggedIn && !loading" class="max-w-4xl mx-auto mb-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
       <div class="bg-blue-100 rounded-lg p-6 shadow-md">
         <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">1</div>
         <h3 class="text-xl font-semibold mb-2 text-blue-900">Fyll ut feltene</h3>
@@ -77,8 +109,7 @@ function handleLogin() {
       </div>
     </div>
 
-    <!-- Innloggingsskjema -->
-    <div v-if="!isLoggedIn" class="max-w-md mx-auto p-4 bg-white rounded shadow mb-8">
+    <div v-if="!isLoggedIn && !loading" class="max-w-md mx-auto p-4 bg-white rounded shadow mb-8">
       <h2 class="text-xl font-semibold mb-4">Snakk med vår chatbot</h2>
       <form @submit.prevent="handleLogin">
         <input
@@ -106,13 +137,12 @@ function handleLogin() {
       <p v-if="error" class="text-red-500 mt-2 text-center">{{ error }}</p>
     </div>
 
-    <!-- Tre større ruter nederst -->
-    <div v-if="!isLoggedIn" class="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-5xl mx-auto">
+    <div v-if="!isLoggedIn && !loading" class="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <!-- Resten av rutene dine som før -->
       <router-link
         to="/contact"
         class="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow hover:bg-green-50 hover:ring-2 hover:ring-green-500"
       >
-        <!-- SVG etc. uendret -->
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="w-14 h-14 mb-4 text-green-600"
