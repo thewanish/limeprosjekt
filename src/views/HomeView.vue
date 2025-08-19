@@ -17,17 +17,11 @@ const name = ref('');
 const email = ref('');
 const loading = ref(false);
 const error = ref('');
-let autoStartTimeout: number | undefined;
 
-const createUser = async (auto = false) => {
-  if (auto) {
-    name.value = 'AutoErfaring';
-    email.value = 'autoBransje';
-  } else {
-    if (!name.value.trim() || !email.value.trim()) {
-      error.value = 'Trenger navn og e-post';
-      return;
-    }
+const createUser = async () => {
+  if (!name.value.trim() || !email.value.trim()) {
+    error.value = 'Trenger navn og e-post';
+    return;
   }
 
   loading.value = true;
@@ -56,22 +50,22 @@ const createUser = async (auto = false) => {
 };
 
 function handleLogin() {
-  clearTimeout(autoStartTimeout); // Avbryt auto hvis bruker trykker
   createUser();
 }
 
-onMounted(() => {
-  if (!isLoggedIn.value) {
-    autoStartTimeout = setTimeout(() => {
-      createUser(true);
-    }, 30000); // 30 sec
+// 🔁 WARM-UP: Send HEAD request on mount (backend wake-up, invisible to user)
+onMounted(async () => {
+  try {
+    await axios.head(`${import.meta.env.VITE_API_URL}/register-user`);
+  } catch (err) {
+    console.warn('Warm-up HEAD request failed (ignored):', err);
   }
 });
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-100 p-8">
-    <!-- Step-by-step -->
+    <!-- Step-by-step lyseblå ruter over login -->
     <div v-if="!isLoggedIn" class="max-w-4xl mx-auto mb-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
       <div class="bg-blue-100 rounded-lg p-6 shadow-md">
         <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">1</div>
@@ -90,7 +84,7 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Login-skjema -->
+    <!-- Innloggingsskjema -->
     <div v-if="!isLoggedIn" class="max-w-md mx-auto p-4 bg-white rounded shadow mb-8">
       <h2 class="text-xl font-semibold mb-4">Snakk med vår chatbot</h2>
       <form @submit.prevent="handleLogin">
@@ -113,13 +107,13 @@ onMounted(() => {
           class="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded transition"
           :disabled="loading"
         >
-          {{ loading ? 'Laster...' : 'Start chat' }}
+          {{ loading ? 'Laster..' : 'Start chat (tar 30 sek å våkne)' }}
         </button>
       </form>
       <p v-if="error" class="text-red-500 mt-2 text-center">{{ error }}</p>
     </div>
 
-    <!-- Lenker -->
+    <!-- Tre større ruter nederst -->
     <div v-if="!isLoggedIn" class="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-5xl mx-auto">
       <router-link
         to="/contact"
