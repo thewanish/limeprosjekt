@@ -10,12 +10,10 @@ const userStore = useUserStore();
 const chatStore = useChatStore();
 const router = useRouter();
 
-// Ensure user is logged in
 if (!userStore.userId) {
   router.push('/');
 }
 
-// Watch messages and trigger scroll when new messages arrive
 const chatContainer = ref<HTMLElement | null>(null);
 
 const scrollToBottom = () => {
@@ -27,7 +25,6 @@ const scrollToBottom = () => {
   });
 };
 
-// Load chat history and set scroll on mount
 onMounted(() => {
   chatStore.loadChatHistory().then(() => {
     nextTick(() => {
@@ -36,40 +33,42 @@ onMounted(() => {
   });
 });
 
-// Watch for new messages
 watch(
-  () => chatStore.messages,  // Watch for changes in the messages
+  () => chatStore.messages,
   () => {
     nextTick(() => {
-      scrollToBottom(); // Scroll after new messages are loaded
+      scrollToBottom();
     });
   },
-  { immediate: true }  // Trigger on initial load
+  { immediate: true }
 );
 
-// Format AI messages for better display
 const formatMessage = (text: string) => {
   if (!text) return '';
 
   return text
-    .replace(/\n/g, '<br>') // Preserve line breaks
-    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>') // Bold text
-    .replace(/\*(.*?)\*/g, '<i>$1</i>') // Italic text
-    .replace(/`(.*?)`/g, '<code>$1</code>') // Inline code
-    .replace(/(?:^|\n)- (.*?)(?:\n|$)/g, '<li>$1</li>') // Bullet points
-    .replace(/(?:^|\n)(\d+)\. (.*?)(?:\n|$)/g, '<li>$1. $2</li>') // Numbered lists
-    .replace(/<\/li>\n<li>/g, '</li><li>') // Ensure list continuity
-    .replace(/<li>/, '<ul><li>') // Wrap in `<ul>`
-    .replace(/<\/li>$/, '</li></ul>'); // Close the `<ul>`
+    .replace(/\n/g, '<br>')
+    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+    .replace(/\*(.*?)\*/g, '<i>$1</i>')
+    .replace(/`(.*?)`/g, '<code>$1</code>')
+    .replace(/(?:^|\n)- (.*?)(?:\n|$)/g, '<li>$1</li>')
+    .replace(/(?:^|\n)(\d+)\. (.*?)(?:\n|$)/g, '<li>$1. $2</li>')
+    .replace(/<\/li>\n<li>/g, '</li><li>')
+    .replace(/<li>/, '<ul><li>')
+    .replace(/<\/li>$/, '</li></ul>');
 };
 </script>
 
 <template>
-  <div class="flex flex-col h-screen bg-gray-900 text-white">
+  <div class="flex flex-col h-screen bg-gray-100 text-gray-900">
     <Header />
 
     <!-- Chat messages -->
-    <div id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-4" ref="chatContainer">
+    <div
+      id="chat-container"
+      class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-100"
+      ref="chatContainer"
+    >
       <div
         v-for="(msg, index) in chatStore.messages"
         :key="index"
@@ -79,12 +78,12 @@ const formatMessage = (text: string) => {
         <div
           v-html="formatMessage(msg.content)"
           class="max-w-xs px-4 py-2 rounded-lg md:max-w-md"
-          :class="msg.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-white'"
+          :class="msg.role === 'user' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-900'"
         ></div>
       </div>
       <div v-if="chatStore.isLoading" class="flex justify-start">
-        <div class="bg-gray-700 text-white px-4 py-2 rounded-lg">
-          <span class="animate-pulse">AI is thinking...</span>
+        <div class="bg-gray-200 text-gray-900 px-4 py-2 rounded-lg">
+          <span class="animate-pulse">Arbeidstilsynet...</span>
         </div>
       </div>
     </div>
@@ -94,5 +93,5 @@ const formatMessage = (text: string) => {
 </template>
 
 <style scoped>
-/* Add any custom styles for your chat interface here */
+/* Ekstra styling kan legges til her */
 </style>

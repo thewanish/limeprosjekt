@@ -1,150 +1,105 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import axios from 'axios';
+import { computed } from 'vue';
 import { useUserStore } from '../stores/user';
 import { useRouter } from 'vue-router';
-import robotImage from '../assets/robot.png';
 
 const userStore = useUserStore();
 const router = useRouter();
 
-const name = ref('');
-const email = ref('');
-const loading = ref(false);
-const error = ref('');
+const isLoggedIn = computed(() => !!userStore.userId);
 
-const createUser = async () => {
-  if (!name.value || !email.value) {
-    error.value = 'Trenger navn og etternavn eller selskap';
-    return;
-  }
-
-  loading.value = true;
-  error.value = '';
-
-  try {
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_API_URL}/register-user`,
-      {
-        name: name.value,
-        email: email.value,
-      }
-    );
-
-    userStore.setUser({
-      userId: data.userId,
-      name: data.name,
-    });
-
-    router.push('/chat');
-  } catch (err) {
-    error.value = 'Noe gikk galt. Prøv igjen';
-  } finally {
-    loading.value = false;
-  }
-};
+function handleLogin(userData: { userId: string; name: string }) {
+  userStore.setUser(userData);
+  router.push('/chat');
+}
 </script>
 
 <template>
-  <div class="h-screen flex items-center justify-center bg-gray-900 text-white relative overflow-hidden">
-    <!-- Animated lines background (Unchanged) -->
-    <div class="absolute inset-0 w-full h-full lines-bg"></div>
+  <div class="min-h-screen bg-gray-100 p-8">
+    <!-- Step-by-step lyseblå ruter over login -->
+    <div v-if="!isLoggedIn" class="max-w-4xl mx-auto mb-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="bg-blue-100 rounded-lg p-6 shadow-md">
+        <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">
+          1
+        </div>
+        <h3 class="text-xl font-semibold mb-2 text-blue-900">Fyll ut feltene</h3>
+        <p class="text-blue-800">Skriv inn ansiennitet og bransje for å starte chatten.</p>
+      </div>
+      <div class="bg-blue-100 rounded-lg p-6 shadow-md">
+        <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">
+          2
+        </div>
+        <h3 class="text-xl font-semibold mb-2 text-blue-900">Trykk Start og Vent</h3>
+        <p class="text-blue-800">Trykk start og vent 30 sekunder for å laste inn og begynne samtalen.</p>
+      </div>
+      <div class="bg-blue-100 rounded-lg p-6 shadow-md">
+        <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">
+          3
+        </div>
+        <h3 class="text-xl font-semibold mb-2 text-blue-900">Snakk med chatbotten</h3>
+        <p class="text-blue-800">Still spørsmål og få svar umiddelbart fra vår AI.</p>
+      </div>
+    </div>
 
-    <!-- Container for login form with glowing snake-like effect -->
-    <div class="relative z-10 p-8 bg-gray-800 rounded-lg shadow-lg w-full max-w-md">
-      <!-- Glowing snake box around the login container -->
-      <div class="absolute inset-0 snake-box"></div>
+    <!-- Innloggingsskjema -->
+    <div v-if="!isLoggedIn" class="max-w-md mx-auto p-4 bg-white rounded shadow mb-8">
+      <h2 class="text-xl font-semibold mb-4">Snakk med vår chatbot</h2>
+      <form @submit.prevent="handleLogin({ userId: '123', name: 'Testbruker' })">
+        <input
+          type="text"
+          placeholder="Ansiennitet"
+          class="w-full p-2 mb-4 border rounded"
+          required
+        />
+        <input
+          type="text"
+          placeholder="Bransje"
+          class="w-full p-2 mb-4 border rounded"
+          required
+        />
+        <button
+          type="submit"
+          class="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded transition"
+        >
+          Start chat
+        </button>
+      </form>
+    </div>
 
-      <img :src="robotImage" alt="" class="mx-auto w-24 h-24 mb-4" />
-      <h1 class="text-2xl font-semibold mb-4 text-center">
-        Velkommen til Vercbot
-      </h1>
-
-      <input
-        type="text"
-        class="w-full p-2 mb-2 bg-gray-700 text-white rounded-lg focus:outline-none"
-        placeholder="Navn"
-        v-model="name"
-      />
-      <input
-        type="email"
-        class="w-full p-2 mb-2 bg-gray-700 text-white rounded-lg focus:outline-none"
-        placeholder="Etternavn/Selskap"
-        v-model="email"
-      />
-
-      <button
-        @click="createUser"
-        class="w-full p-2 bg-green-500 rounded-lg hover:bg-green-600 transition duration-200"
-        :disabled="loading"
+    <!-- Tre større ruter nederst -->
+    <div v-if="!isLoggedIn" class="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <router-link
+        to="/contact"
+        class="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow hover:bg-green-50 hover:ring-2 hover:ring-green-500"
       >
-        {{ loading ? 'Laster..' : 'Start Chat (tar 30 sec å våkne)' }}
-      </button>
+        <!-- Mail icon inline heroicon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 mb-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+        <span class="text-lg font-semibold text-gray-900">Kontakt</span>
+      </router-link>
 
-      <p v-if="error" class="text-red-400 text-center mt-2">{{ error }}</p>
+      <router-link
+        to="/doc"
+        class="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow hover:bg-green-50 hover:ring-2 hover:ring-green-500"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 mb-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.1 0-2 .9-2 2v6h4v-6c0-1.1-.9-2-2-2z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20 14v-2a2 2 0 00-2-2h-4v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2z" />
+        </svg>
+        <span class="text-lg font-semibold text-gray-900">Dokumentasjon</span>
+      </router-link>
+
+      <router-link
+        to="/om"
+        class="flex flex-col items-center bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow hover:bg-green-50 hover:ring-2 hover:ring-green-500"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 mb-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"></circle>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 12v.01M12 7h.01M12 17h.01" />
+        </svg>
+        <span class="text-lg font-semibold text-gray-900">Om Shilwan</span>
+      </router-link>
     </div>
   </div>
 </template>
-
-<style scoped>
-/* Add the animated lines behind the content (Unchanged) */
-.lines-bg {
-  background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0, rgba(255, 255, 255, 0.1) 1px, transparent 1px, transparent 10px);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  animation: moveLines 5s linear infinite;
-}
-
-@keyframes moveLines {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 100% 100%;
-  }
-}
-
-/* Glowing snake box around the login container */
-.snake-box {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  width: calc(100% - 10px);
-  height: calc(100% - 10px);
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle white border */
-  border-radius: 12px;
-  z-index: -1;
-  animation: snakeMovement 6s ease-in-out infinite; /* Snake movement animation */
-}
-
-@keyframes snakeMovement {
-  0% {
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.5);
-    transform: translate(0, 0);
-  }
-  25% {
-    border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 30px rgba(255, 255, 255, 0.7);
-    transform: translate(10px, 10px);
-  }
-  50% {
-    border-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.7), 0 0 50px rgba(255, 255, 255, 0.8);
-    transform: translate(-10px, -10px);
-  }
-  75% {
-    border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 30px rgba(255, 255, 255, 0.7);
-    transform: translate(5px, -5px);
-  }
-  100% {
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.5);
-    transform: translate(0, 0);
-  }
-}
-</style>

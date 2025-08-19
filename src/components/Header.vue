@@ -14,11 +14,14 @@ const logout = () => {
 
 <template>
   <div
-    class="py-4 px-6 bg-gray-800 shadow-md flex justify-between items-center"
+    class="py-4 px-6 bg-white shadow-md flex justify-between items-center border-b border-gray-200"
   >
-    <img :src="robotImage" alt="Chat AI" class="w-8 h-8" />
-    <h1 class="text-lg font-semibold">Vercbot</h1>
-    <button @click="logout" class="text-gray-400 hover:text-white">
+    <img :src="robotImage" alt="Chat AI" class="w-8 h-8" /> 
+    <h1 class="text-lg font-semibold text-gray-900">Chatbot</h1>
+    <button
+      @click="logout"
+      class="text-white bg-green-600 px-4 py-2 rounded-md hover:bg-green-700 transition-colors duration-300"
+    >
       Logg ut
     </button>
   </div>
