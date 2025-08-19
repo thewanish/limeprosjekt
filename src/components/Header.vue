@@ -22,7 +22,7 @@ const logout = () => {
       @click="logout"
       class="text-white bg-green-600 px-4 py-2 rounded-md hover:bg-green-700 transition-colors duration-300"
     >
-      Logg ut
+      Tilbake til forsiden
     </button>
   </div>
 </template>

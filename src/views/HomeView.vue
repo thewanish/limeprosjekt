@@ -57,7 +57,7 @@ function handleLogin() {
       <div class="bg-blue-100 rounded-lg p-6 shadow-md">
         <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">1</div>
         <h3 class="text-xl font-semibold mb-2 text-blue-900">Fyll ut feltene</h3>
-        <p class="text-blue-800">Skriv inn navn og e-post for å starte chatten.</p>
+        <p class="text-blue-800">Skriv inn din erfaring og bransje for å starte chatten.</p>
       </div>
       <div class="bg-blue-100 rounded-lg p-6 shadow-md">
         <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">2</div>
@@ -84,7 +84,7 @@ function handleLogin() {
         />
         <input
           v-model="email"
-          type="email"
+          type="text"
           placeholder="Bransje"
           class="w-full p-2 mb-4 border rounded"
           required
