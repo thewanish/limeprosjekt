@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, nextTick, ref, watch } from 'vue';
+import { ref, nextTick, onMounted, watch } from 'vue';
 import { useUserStore } from '../stores/user';
 import { useChatStore } from '../stores/chat';
-import { useRouter } from 'vue-router';
+import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import Header from '../components/Header.vue';
 import ChatInput from '../components/ChatInput.vue';
 
@@ -42,6 +42,14 @@ watch(
   },
   { immediate: true }
 );
+
+// Når brukeren forlater /chat, f.eks. tilbakeknapp til /, så logg ut userStore
+onBeforeRouteLeave((to, _from, next) => {
+  if (to.path === '/') {
+    userStore.logout();
+  }
+  next();
+});
 
 const formatMessage = (text: string) => {
   if (!text) return '';
@@ -83,7 +91,7 @@ const formatMessage = (text: string) => {
       </div>
       <div v-if="chatStore.isLoading" class="flex justify-start">
         <div class="bg-gray-200 text-gray-900 px-4 py-2 rounded-lg">
-          <span class="animate-pulse">Arbeidstilsynet skriver...</span>
+          <span class="animate-pulse">Arbeidstilsynet bot skriver...</span>
         </div>
       </div>
     </div>

@@ -1,4 +1,3 @@
-// src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import ChatView from '../views/ChatView.vue';
@@ -7,11 +6,11 @@ import ContactView from '../views/Contact.vue';
 import OmView from '../views/Om.vue';
 
 const routes = [
-  { path: '/', component: HomeView },
-  { path: '/chat', component: ChatView },
-  { path: '/doc', component: DocView },   
-  { path: '/contact', component: ContactView },  
-  { path: '/om', component: OmView }, 
+  { path: '/', name: 'Home', component: HomeView },
+  { path: '/chat', name: 'Chat', component: ChatView },
+  { path: '/doc', name: 'Doc', component: DocView },
+  { path: '/contact', name: 'Contact', component: ContactView },
+  { path: '/om', name: 'Om', component: OmView },
 ];
 
 const router = createRouter({

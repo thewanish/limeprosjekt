@@ -1,4 +1,10 @@
+
+
 <script setup lang="ts">
+defineOptions({
+  name: 'HomeView'
+});
+
 import { ref, computed } from 'vue';
 import { useUserStore } from '../stores/user';
 import { useRouter } from 'vue-router';
