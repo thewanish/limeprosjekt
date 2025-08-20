@@ -53,7 +53,7 @@ function handleLogin() {
   createUser();
 }
 
-// 🔁 WARM-UP: Send HEAD request on mount (backend wake-up, invisible to user)
+// Sendt HEAD request (backend wake up )
 onMounted(async () => {
   try {
     await axios.head(`${import.meta.env.VITE_API_URL}/register-user`);
