@@ -86,7 +86,7 @@ onMounted(async () => {
 
     <!-- Innloggingsskjema -->
     <div v-if="!isLoggedIn" class="max-w-md mx-auto p-4 bg-white rounded shadow mb-8">
-      <h2 class="text-xl font-semibold mb-4">Snakk med vår chatbot</h2>
+      <h2 class="text-xl font-semibold mb-4">Snakk med chatbot for å finne riktig CRM</h2>
       <form @submit.prevent="handleLogin">
         <input
           v-model="name"
