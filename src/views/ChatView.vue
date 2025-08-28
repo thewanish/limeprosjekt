@@ -91,7 +91,7 @@ const formatMessage = (text: string) => {
       </div>
       <div v-if="chatStore.isLoading" class="flex justify-start">
         <div class="bg-gray-200 text-gray-900 px-4 py-2 rounded-lg">
-          <span class="animate-pulse">Arbeidstilsynet bot skriver...</span>
+          <span class="animate-pulse">Lime bot skriver...</span>
         </div>
       </div>
     </div>

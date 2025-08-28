@@ -2,20 +2,17 @@
   <nav class="bg-white border-b border-gray-200" role="navigation" aria-label="Hovedmeny">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
-        <!-- Logo + tekst -->
+        <!-- Logo only -->
         <router-link
           to="/"
           class="flex items-center space-x-3 hover:text-green-600 focus:outline-none focus:text-green-600"
         >
           <img
             :src="logo"
-            alt="Arbeidstilsynet logo"
-            class="h-8 w-auto"
+            alt="Lime Technologies logo"
+            class="h-10 w-auto"
             aria-hidden="true"
           />
-          <span class="text-2xl font-semibold text-gray-900 font-source-sans-pro">
-            Arbeidstilsynet
-          </span>
         </router-link>
 
         <!-- Desktop Menu -->
@@ -129,7 +126,6 @@
         </li>
 
         <li>
-          <!-- Mobil dropdown for Dokumentasjon -->
           <button
             @click="toggleMobileDropdown"
             class="w-full flex items-center justify-between px-3 py-2 rounded hover:bg-green-50 hover:text-green-700 focus:outline-none focus:bg-green-50 focus:text-green-700"
@@ -185,7 +181,7 @@
 </template>
 
 <script setup lang="ts">
-import logo from '../assets/logo-arbeidstilsynet.svg'
+import logo from '../assets/lime.svg'
 import { ref } from 'vue'
 
 const isOpen = ref(false)

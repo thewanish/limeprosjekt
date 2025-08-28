@@ -70,7 +70,7 @@ onMounted(async () => {
       <div class="bg-blue-100 rounded-lg p-6 shadow-md">
         <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">1</div>
         <h3 class="text-xl font-semibold mb-2 text-blue-900">Fyll ut feltene</h3>
-        <p class="text-blue-800">Skriv inn din erfaring og bransje for å starte chatten.</p>
+        <p class="text-blue-800">Skriv inn din kundebase og bransje til din bedrift for å starte chatten.</p>
       </div>
       <div class="bg-blue-100 rounded-lg p-6 shadow-md">
         <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white font-bold mb-4 text-lg">2</div>
@@ -91,14 +91,14 @@ onMounted(async () => {
         <input
           v-model="name"
           type="text"
-          placeholder="Ansiennitet"
+          placeholder="Antall kunder dere har"
           class="w-full p-2 mb-4 border rounded"
           required
         />
         <input
           v-model="email"
           type="text"
-          placeholder="Bransje"
+          placeholder="Skriv inn hvilken bransje"
           class="w-full p-2 mb-4 border rounded"
           required
         />
@@ -107,7 +107,7 @@ onMounted(async () => {
           class="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded transition"
           :disabled="loading"
         >
-          {{ loading ? 'Laster..' : 'Start chat (tar 30 sek å våkne)' }}
+          {{ loading ? 'Laster..' : 'Begynn her (tar 30 sek å våkne)' }}
         </button>
       </form>
       <p v-if="error" class="text-red-500 mt-2 text-center">{{ error }}</p>
